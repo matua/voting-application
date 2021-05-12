@@ -1,8 +1,9 @@
 package com.matuageorge.votingapplication.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -17,7 +18,9 @@ public class Restaurant {
     private Integer id;
     private String name;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+//    @JsonIgnore
+    @ToString.Exclude
+    @JsonManagedReference
     private Set<Dish> menu;
 
     public void addDishToRestaurant(Dish dish){
