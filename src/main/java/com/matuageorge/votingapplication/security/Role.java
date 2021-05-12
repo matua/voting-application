@@ -1,6 +1,13 @@
 package com.matuageorge.votingapplication.security;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 public enum Role {
     ADMIN,
-    USER
+    USER;
+
+    @Id
+    @GeneratedValue
+    private Integer id;
 }
