@@ -60,18 +60,33 @@ public class VoteRestApiController {
             if (!voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
                 voteRepository.save(vote);
             } else {
-                throw new VotingException("You can vote only nce. Try tomorrow");
+                throw new VotingException("You can vote only once. Try tomorrow");
             }
         } else {
-            throw new VotingException("Voting time is over for today. Try tomorrow");
+            throw new VotingException("Voting time is over.");
         }
     }
 
     @GetMapping(path = "/results/{date}")
-    public Map<Restaurant, List<Vote>> getVotingResultsByDate(@PathVariable(value = "date") String date) {
+    public Map<Restaurant, List<Vote>> getVotingResultsDetailedByDate(@PathVariable(value = "date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
         List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));
-        return votes.stream().collect(Collectors.groupingBy(Vote::getRestaurant));
+        return votes.stream()
+                .collect(Collectors.groupingBy(Vote::getRestaurant));
+    }
+
+    @GetMapping(path = "/simple-results/{date}")
+    public Map<Restaurant, Long> getSimpleVotingResults(@PathVariable(value = "date") String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
+        List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));
+        Map<Restaurant, Long> result = votes.stream()
+                .collect(Collectors.groupingBy(Vote::getRestaurant, Collectors.counting()));
+
+        result
+                .entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
+        return result;
     }
 
     @DeleteMapping(path = "{voteId}")

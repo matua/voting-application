@@ -2,6 +2,7 @@ package com.matuageorge.votingapplication.controller;
 
 import com.matuageorge.votingapplication.dto.EntitiesPageDto;
 import com.matuageorge.votingapplication.dto.UserDto;
+import com.matuageorge.votingapplication.exceptions.VotingException;
 import com.matuageorge.votingapplication.model.User;
 import com.matuageorge.votingapplication.repository.UserRepository;
 import com.matuageorge.votingapplication.security.Role;
@@ -34,10 +35,12 @@ public class UserRestApiController {
                 .setRoles(Set.of(Role.USER))
                 .setRegistrationDate(LocalDateTime.now().withNano(0));
         BeanUtils.copyProperties(userDto,user);
-        userRepository.save(user);
+        if (userRepository.findByEmail(user.getEmail()).isEmpty()){
+            userRepository.save(user);
+        } else {
+            throw new VotingException("User already exists");
+        }
     }
-
-
 
     @GetMapping(path = "{userEmail}")
     public User getUserByEmail(@PathVariable String userEmail) {
@@ -56,12 +59,11 @@ public class UserRestApiController {
 
     @PutMapping(path = "{userEmail}")
     public void updateUser(@PathVariable String userEmail, @RequestBody UserDto userDto) {
-        User user = new User();
         User userToUpdate = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User email: " + userEmail + " was not found"));
-        BeanUtils.copyProperties(userDto, user);
-        userRepository.save(user);
+        BeanUtils.copyProperties(userDto, userToUpdate);
+        userRepository.save(userToUpdate);
     }
 
     @DeleteMapping(path = "{userEmail}")
