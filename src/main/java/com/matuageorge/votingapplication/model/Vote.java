@@ -1,11 +1,14 @@
 package com.matuageorge.votingapplication.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
+@Accessors(chain = true)
 @Entity
 @Table(name = "votes")
 public class Vote {
@@ -18,5 +21,7 @@ public class Vote {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
-    private Date votingDate;
+    private LocalDate votingDate;
+    private LocalTime votingTime;
+
 }

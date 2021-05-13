@@ -75,6 +75,13 @@ public class RestaurantRestApiController {
                         "Restaurant with id " + restaurantId + " was not found"));
     }
 
+    @GetMapping(path = "{restaurantName}")
+    public Restaurant getRestaurantByName(@PathVariable String restaurantName) {
+        return restaurantRepository.findByName(restaurantName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Restaurant: " + restaurantName + " was not found"));
+    }
+
     @GetMapping("{offset}/{limit}")
     @ResponseBody
     public EntitiesPageDto<Restaurant> getAllRestaurants(@PathVariable Integer offset,
