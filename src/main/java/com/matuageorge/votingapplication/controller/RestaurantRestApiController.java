@@ -1,8 +1,8 @@
 package com.matuageorge.votingapplication.controller;
 
 import com.matuageorge.votingapplication.dto.DishDto;
+import com.matuageorge.votingapplication.dto.EntitiesPageDto;
 import com.matuageorge.votingapplication.dto.RestaurantDto;
-import com.matuageorge.votingapplication.dto.RestaurantsPageDto;
 import com.matuageorge.votingapplication.model.Dish;
 import com.matuageorge.votingapplication.model.Restaurant;
 import com.matuageorge.votingapplication.repository.RestaurantRepository;
@@ -30,7 +30,9 @@ public class RestaurantRestApiController {
     }
 
     @PostMapping
-    public void addNewRestaurant(@RequestBody Restaurant restaurant) {
+    public void addNewRestaurant(@RequestBody RestaurantDto restaurantDto) {
+        Restaurant restaurant = new Restaurant();
+        BeanUtils.copyProperties(restaurantDto, restaurant);
         restaurantRepository.save(restaurant);
     }
 
@@ -41,7 +43,7 @@ public class RestaurantRestApiController {
                         "Restaurant with id " + restaurantId + " was not found"));
 
         Dish dish = new Dish();
-        dish.setDate(LocalDateTime.now());
+        dish.setDate(LocalDateTime.now().withNano(0));
         BeanUtils.copyProperties(dishDto, dish);
         restaurantToUpdate.addDishToRestaurant(dish);
         restaurantRepository.save(restaurantToUpdate);
@@ -75,10 +77,10 @@ public class RestaurantRestApiController {
 
     @GetMapping("{offset}/{limit}")
     @ResponseBody
-    public RestaurantsPageDto getAllRestaurants(@PathVariable Integer offset,
-                                                @PathVariable Integer limit) {
+    public EntitiesPageDto<Restaurant> getAllRestaurants(@PathVariable Integer offset,
+                                                         @PathVariable Integer limit) {
         Pageable nextPage = PageRequest.of(offset, limit);
-        return new RestaurantsPageDto(restaurantRepository.findAll(nextPage).getContent());
+        return new EntitiesPageDto<>(restaurantRepository.findAll(nextPage).getContent());
     }
 
     @PutMapping(path = "{restaurantId}")

@@ -17,3 +17,22 @@ insert into dishes (id, name, price, restaurant_id, date) values (12, 'Alphazap'
 insert into dishes (id, name, price, restaurant_id, date) values (13, 'Konklab', 2105, 3, '2021-05-10 00:17:03');
 insert into dishes (id, name, price, restaurant_id, date) values (14, 'Andalax', 1980, 3, '2021-05-09 04:49:32');
 insert into dishes (id, name, price, restaurant_id, date) values (15, 'Cardify', 2252, 3, '2021-05-10 03:39:50');
+
+insert into users(id, email, password, registration_date, activated)
+values (1, 'example@example.com', 'example', '2020-01-01 00:00:00', true);
+insert into user_roles(user_id, roles) values (1, 'ADMIN');
+
+insert into users(id, email, password, registration_date, activated)
+values (2, 'example2@example.com', 'example2', '2021-01-01 00:00:00', true);
+insert into user_roles(user_id, roles) values (2, 'USER');
+
+
+--     private Integer id;
+-- private String email;
+-- private String password;
+-- private LocalDateTime registrationDate;
+-- private Boolean activated;
+-- @Enumerated(EnumType.STRING)
+--     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+--     @ElementCollection(fetch = FetchType.EAGER)
+--     private Set<Role> roles;
