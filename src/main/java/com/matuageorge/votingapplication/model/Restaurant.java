@@ -26,4 +26,8 @@ public class Restaurant {
     public void addDishToRestaurant(Dish dish){
         menu.add(dish);
     }
+
+    public void addToMenu(Set<Dish> dishes) {
+        menu.addAll(dishes);
+    }
 }

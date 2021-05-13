@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @RestController
 @RequestMapping("api/v1/voting/restaurants/")
@@ -42,6 +44,25 @@ public class RestaurantRestApiController {
         dish.setDate(LocalDateTime.now());
         BeanUtils.copyProperties(dishDto, dish);
         restaurantToUpdate.addDishToRestaurant(dish);
+        restaurantRepository.save(restaurantToUpdate);
+    }
+
+    @PostMapping(path = "{restaurantId}/dishes")
+    public void addDishesToRestaurant(@RequestBody Set<DishDto> dishDtos, @PathVariable Integer restaurantId) {
+        Restaurant restaurantToUpdate = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Restaurant with id " + restaurantId + " was not found"));
+
+        Set<Dish> dishes = new HashSet<>();
+        dishDtos.forEach(dishDto -> {
+            Dish dish = new Dish();
+            dish.setDate(LocalDateTime.now());
+//            dish.setRestaurant();
+            BeanUtils.copyProperties(dishDto, dish);
+            dishes.add(dish);
+        });
+
+        restaurantToUpdate.addToMenu(dishes);
         restaurantRepository.save(restaurantToUpdate);
     }
 
