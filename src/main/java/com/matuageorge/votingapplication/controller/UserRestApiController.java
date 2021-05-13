@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,10 +23,12 @@ import java.util.Set;
 public class UserRestApiController {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserRestApiController(UserRepository userRepository) {
+    public UserRestApiController(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @PostMapping
@@ -33,9 +36,10 @@ public class UserRestApiController {
         User user = new User()
                 .setActivated(false)
                 .setRoles(Set.of(Role.USER))
+                .setEmail(userDto.getEmail())
+                .setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()))
                 .setRegistrationDate(LocalDateTime.now().withNano(0));
-        BeanUtils.copyProperties(userDto,user);
-        if (userRepository.findByEmail(user.getEmail()).isEmpty()){
+        if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             userRepository.save(user);
         } else {
             throw new VotingException("User already exists");
@@ -69,9 +73,9 @@ public class UserRestApiController {
     @DeleteMapping(path = "{userEmail}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserByEmail(@PathVariable String userEmail) {
-            User user = userRepository.findByEmail(userEmail)
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "User email: " + userEmail + " was not found"));
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User email: " + userEmail + " was not found"));
         userRepository.deleteById(user.getId());
     }
 }
