@@ -5,6 +5,7 @@ import com.matuageorge.votingapplication.model.Dish;
 import com.matuageorge.votingapplication.repository.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -29,12 +30,14 @@ public class DishRestApiController {
 
     @DeleteMapping(path = "{restaurantId}/{dishId")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteDishById(@PathVariable Integer restaurantId,
                                @PathVariable Integer dishId) {
         dishRepository.deleteById(dishId);
     }
 
     @PutMapping(path = "{dishId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void updateDish(@PathVariable Integer dishId, @RequestBody DishDto dishDto) {
         Dish dishToUpdate = dishRepository.findById(dishId)
                 .orElseThrow(() -> new EntityNotFoundException(

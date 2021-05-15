@@ -11,6 +11,7 @@ import com.matuageorge.votingapplication.repository.VoteRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -68,6 +69,7 @@ public class VoteRestApiController {
     }
 
     @GetMapping(path = "/results/{date}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Map<Restaurant, List<Vote>> getVotingResultsDetailedByDate(@PathVariable(value = "date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
         List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));
@@ -91,6 +93,7 @@ public class VoteRestApiController {
 
     @DeleteMapping(path = "{voteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteById(@PathVariable Integer voteId) {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new EntityNotFoundException(
