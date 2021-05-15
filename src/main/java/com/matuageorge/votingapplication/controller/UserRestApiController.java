@@ -3,9 +3,9 @@ package com.matuageorge.votingapplication.controller;
 import com.matuageorge.votingapplication.dto.EntitiesPageDto;
 import com.matuageorge.votingapplication.dto.UserDto;
 import com.matuageorge.votingapplication.exceptions.VotingException;
+import com.matuageorge.votingapplication.model.Role;
 import com.matuageorge.votingapplication.model.User;
 import com.matuageorge.votingapplication.repository.UserRepository;
-import com.matuageorge.votingapplication.security.Role;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +35,7 @@ public class UserRestApiController {
     public void addNewUser(@RequestBody UserDto userDto) {
         User user = new User()
                 .setActivated(false)
-                .setRoles(Set.of(Role.USER))
+                .setRoles(Set.of(new Role("ADMIN")))
                 .setEmail(userDto.getEmail())
                 .setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()))
                 .setRegistrationDate(LocalDateTime.now().withNano(0));

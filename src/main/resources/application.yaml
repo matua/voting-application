@@ -1,0 +1,24 @@
+server:
+  error:
+    include-message: always
+  port: 80
+spring:
+  datasource:
+    data: classpath:data.sql
+    driverClassName: org.h2.Driver
+    initialization-mode: always
+    name: datasource
+    password: admin
+    url: jdbc:h2:mem:voting_db
+    username: matua
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true

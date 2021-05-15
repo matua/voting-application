@@ -1,12 +1,11 @@
 package com.matuageorge.votingapplication.model;
 
-import com.matuageorge.votingapplication.security.Role;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 @Data
 @Accessors(chain = true)
@@ -20,8 +19,12 @@ public class User {
     private String password;
     private LocalDateTime registrationDate;
     private Boolean activated;
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    //    @Enumerated(EnumType.STRING)
+//    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+//    @ElementCollection(fetch = FetchType.EAGER)
+    @ManyToMany
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles;
 }
