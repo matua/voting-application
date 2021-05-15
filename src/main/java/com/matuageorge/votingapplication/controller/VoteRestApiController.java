@@ -10,10 +10,12 @@ import com.matuageorge.votingapplication.repository.VoteRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1/voting/votes/")
 public class VoteRestApiController {
 
-    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(17, 0);
+    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(23, 0);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
@@ -39,16 +41,16 @@ public class VoteRestApiController {
     }
 
     @PostMapping
-    public void vote(@RequestBody VoteDto voteDto) {
+    public ResponseEntity<String> vote(@RequestBody VoteDto voteDto,
+                               Principal voter) {
         LocalDateTime votingDateTime = LocalDateTime.now().withNano(0);
         LocalDate votingDate = votingDateTime.toLocalDate();
         LocalTime votingTime = votingDateTime.toLocalTime();
-        LocalDateTime votingTimeThreshold = VOTING_TIME_THRESHOLD;
 
-        if (votingDateTime.isBefore(votingTimeThreshold)) {
-            User user = userRepository.findByEmail(voteDto.getUserEmail())
+        if (votingDateTime.isBefore(VOTING_TIME_THRESHOLD)) {
+            User user = userRepository.findByEmail(voter.getName())
                     .orElseThrow(() -> new EntityNotFoundException(
-                            "User email: " + voteDto.getUserEmail() + " was not found"));
+                            "User email: " + voter.getName() + " was not found"));
             Restaurant restaurant = restaurantRepository.findByName(voteDto.getRestaurantName())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Restaurant: " + voteDto.getRestaurantName() + " was not found"));
@@ -61,11 +63,12 @@ public class VoteRestApiController {
             if (!voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
                 voteRepository.save(vote);
             } else {
-                throw new RuntimeException("You can vote only once. Try tomorrow");
+                return new ResponseEntity<>("Only 1 vote per user is allowed", HttpStatus.FORBIDDEN);
             }
         } else {
-            throw new RuntimeException("Voting time is over.");
+            return new ResponseEntity<>("Voting time is over", HttpStatus.FORBIDDEN);
         }
+        return new ResponseEntity<>("Your vote is taken", HttpStatus.OK);
     }
 
     @GetMapping(path = "/results/{date}")

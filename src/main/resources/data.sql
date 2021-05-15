@@ -51,7 +51,7 @@ insert into users(email, password, registration_date, activated)
 values ('user2@i.c', '$2y$10$AkDvMXC3lEBRvhbdBUdeS.NjN6SCT5o.T0kGqlZFbPBm0ZQN.pRbe', '2020-01-01 00:00:00',
         true);
 insert into users(email, password, registration_date, activated)
-values ('user3@i.c', '$2y$10$wCCDJU5.yEPctdwh2iDX9uxcR1Zcjpa2uF35rTjZDMd.VbeoLZELe',
+values ('notactivated@i.c', '$2y$10$vmRnsIss/Pxw.oj8yghhxOaHJvntqEb9GbAgY6B/.tlvp0dafngYS',
         '2021-01-01 00:00:00', false);
 
 insert into users_roles (user_id, role_id)
