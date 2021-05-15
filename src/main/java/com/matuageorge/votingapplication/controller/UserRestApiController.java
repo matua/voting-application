@@ -2,7 +2,6 @@ package com.matuageorge.votingapplication.controller;
 
 import com.matuageorge.votingapplication.dto.EntitiesPageDto;
 import com.matuageorge.votingapplication.dto.UserDto;
-import com.matuageorge.votingapplication.exceptions.VotingException;
 import com.matuageorge.votingapplication.model.Role;
 import com.matuageorge.votingapplication.model.User;
 import com.matuageorge.votingapplication.repository.UserRepository;
@@ -42,7 +41,7 @@ public class UserRestApiController {
         if (userRepository.findByEmail(user.getEmail()).isEmpty()) {
             userRepository.save(user);
         } else {
-            throw new VotingException("User already exists");
+            throw new RuntimeException("User already exists");
         }
     }
 

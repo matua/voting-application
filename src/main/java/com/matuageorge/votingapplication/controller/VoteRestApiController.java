@@ -1,7 +1,6 @@
 package com.matuageorge.votingapplication.controller;
 
 import com.matuageorge.votingapplication.dto.VoteDto;
-import com.matuageorge.votingapplication.exceptions.VotingException;
 import com.matuageorge.votingapplication.model.Restaurant;
 import com.matuageorge.votingapplication.model.User;
 import com.matuageorge.votingapplication.model.Vote;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1/voting/votes/")
 public class VoteRestApiController {
 
+    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(17, 0);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
@@ -43,7 +43,7 @@ public class VoteRestApiController {
         LocalDateTime votingDateTime = LocalDateTime.now().withNano(0);
         LocalDate votingDate = votingDateTime.toLocalDate();
         LocalTime votingTime = votingDateTime.toLocalTime();
-        LocalDateTime votingTimeThreshold = LocalDate.now().atTime(23, 0);
+        LocalDateTime votingTimeThreshold = VOTING_TIME_THRESHOLD;
 
         if (votingDateTime.isBefore(votingTimeThreshold)) {
             User user = userRepository.findByEmail(voteDto.getUserEmail())
@@ -61,10 +61,10 @@ public class VoteRestApiController {
             if (!voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
                 voteRepository.save(vote);
             } else {
-                throw new VotingException("You can vote only once. Try tomorrow");
+                throw new RuntimeException("You can vote only once. Try tomorrow");
             }
         } else {
-            throw new VotingException("Voting time is over.");
+            throw new RuntimeException("Voting time is over.");
         }
     }
 

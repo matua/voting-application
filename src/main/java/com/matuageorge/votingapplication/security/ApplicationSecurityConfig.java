@@ -47,6 +47,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/voting/users/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic();
     }

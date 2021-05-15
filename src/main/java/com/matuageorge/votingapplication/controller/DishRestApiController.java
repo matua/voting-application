@@ -3,28 +3,37 @@ package com.matuageorge.votingapplication.controller;
 import com.matuageorge.votingapplication.dto.DishDto;
 import com.matuageorge.votingapplication.model.Dish;
 import com.matuageorge.votingapplication.repository.DishRepository;
+import com.matuageorge.votingapplication.repository.RestaurantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/voting/dishes/")
 public class DishRestApiController {
 
     private final DishRepository dishRepository;
+    private final RestaurantRepository restaurantRepository;
 
     @Autowired
-    public DishRestApiController(DishRepository dishRepository) {
+    public DishRestApiController(DishRepository dishRepository, RestaurantRepository restaurantRepository) {
         this.dishRepository = dishRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @GetMapping(path = "{restaurantId}")
-    public List<Dish> getDishesByRestaurantId(@PathVariable Integer restaurantId) {
-        return dishRepository.findByRestaurantId(restaurantId);
+    public HttpEntity<?> getDishesByRestaurantId(@PathVariable Integer restaurantId) {
+        if (!restaurantRepository.existsById(restaurantId)){
+            return new ResponseEntity<>(
+                    "Restaurant not found",
+                    HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(dishRepository.findByRestaurantId(restaurantId), HttpStatus.OK);
     }
 
 
