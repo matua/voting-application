@@ -28,22 +28,27 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                headers().frameOptions().disable()
+//        http.
+//                headers().frameOptions().disable()
+//                .and().csrf().disable()
+//                .authorizeRequests()
+////                .antMatchers("/").permitAll();
+//                .antMatchers("/").hasAuthority("ADMIN")
+//                .and()
+//                .httpBasic();
+
+        http.authorizeRequests()
+//                .antMatchers("/**").authenticated()
+                .antMatchers("/api/v1/voting/users/**").hasRole("ADMIN")
                 .and()
-                .csrf().disable()
-                .authorizeRequests()
-//                .antMatchers("/").permitAll()
-                .antMatchers("/").hasAuthority("ADMIN");
-
-
-//        http.authorizeRequests()
-//                .antMatchers("/authenticated/**").authenticated()
+                .httpBasic();
 //                .antMatchers("/dao").authenticated()
-//                .antMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN") // ROLE_ADMIN, ROLE_SUPERADMIN
+//                .antMatchers("/**").hasRole("ADMIN") // ROLE_ADMIN
 //                .anyRequest().permitAll()
 //                .and()
 //                .formLogin();
+
+        http.headers().frameOptions().disable();
     }
 
     @Bean

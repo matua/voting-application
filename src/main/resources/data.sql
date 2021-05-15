@@ -37,19 +37,18 @@ insert into dishes (id, name, price, restaurant_id, date)
 values (15, 'Cardify', 2252, 3, '2021-05-10 03:39:50');
 
 insert into roles (name)
-values ('ROLE_USER');
-insert into roles (name)
 values ('ROLE_ADMIN');
+insert into roles (name)
+values ('ROLE_USER');
 
 insert into users(id, email, password, registration_date, activated)
-values (1, 'example@example.com', '$2y$12$rvIFb6H3/.iPgZurwr8voeDRiUctnegTRc9TooRDPEqbWl1mBvjnK', '2020-01-01 00:00:00',
+values (1, 'admin@i.c', '$2y$12$1iLw6CfVjgCuvnKnKfoLJOLase/9d0Imtxw5WyUKdMxLkWaKyr5i2', '2020-01-01 00:00:00',
         true);
 insert into users(id, email, password, registration_date, activated)
-values (2, 'example2@example.com', '$2y$12$e41ebFWaEFFUXZ8tFdOkqupwOws.rGgxdPJ/dlhM9NAFDpKJYKMq.',
+values (2, 'user@i.c', '$2y$12$tAYuwYaLmKp0jxZguKNDSOs9uLbmCRmG5/U0CY5l/g4T5YdCd0d5.',
         '2021-01-01 00:00:00', true);
-// bcrypted password 'user'
 
 insert into users_roles (user_id, role_id)
 values (1, 1);
 insert into users_roles (user_id, role_id)
-values (2, 1);
+values (2, 2);
