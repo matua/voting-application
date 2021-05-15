@@ -36,23 +36,6 @@ public class DishRestApiController {
         return new ResponseEntity<>(dishRepository.findByRestaurantId(restaurantId), HttpStatus.OK);
     }
 
-//    @GetMapping(path = "{restaurantName}")
-//    public ResponseEntity<List<Dish>> getDishesByRestaurantName(@PathVariable String restaurantName) {
-//        restaurantRepository.findByName(restaurantName)
-//                .orElseThrow(() -> new EntityNotFoundException(
-//                        "Restaurant \"" + restaurantName + "\" was not found"));
-//        Integer restaurantId = restaurantRepository.findByName(restaurantName).get().getId();
-//        return new ResponseEntity<>(dishRepository.findByRestaurantId(restaurantId), HttpStatus.OK);
-//    }
-
-
-    @DeleteMapping(path = "{dishId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> deleteDishById(@PathVariable Integer dishId) {
-        dishRepository.deleteById(dishId);
-        return new ResponseEntity<>("Dish was deleted", HttpStatus.OK);
-    }
-
     @PutMapping(path = "{dishId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateDish(@PathVariable Integer dishId, @RequestBody DishDto dishDto) {
@@ -62,5 +45,15 @@ public class DishRestApiController {
         BeanUtils.copyProperties(dishDto, dishToUpdate);
         dishRepository.save(dishToUpdate);
         return new ResponseEntity<>("Dish was successfully updated", HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "{dishId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteDishById(@PathVariable Integer dishId) {
+        dishRepository.findById(dishId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Dish with id " + dishId + " was not found"));
+        dishRepository.deleteById(dishId);
+        return new ResponseEntity<>("Dish was deleted", HttpStatus.OK);
     }
 }

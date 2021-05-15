@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,15 +33,16 @@ public class RestaurantRestApiController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addNewRestaurant(@RequestBody RestaurantDto restaurantDto) {
+    public ResponseEntity<String> addNewRestaurant(@RequestBody RestaurantDto restaurantDto) {
         Restaurant restaurant = new Restaurant();
         BeanUtils.copyProperties(restaurantDto, restaurant);
         restaurantRepository.save(restaurant);
+        return new ResponseEntity<>("Restaurant was added successfully", HttpStatus.OK);
     }
 
     @PostMapping(path = "{restaurantId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addDishToRestaurant(@RequestBody DishDto dishDto, @PathVariable Integer restaurantId) {
+    public ResponseEntity<String> addDishToRestaurant(@RequestBody DishDto dishDto, @PathVariable Integer restaurantId) {
         Restaurant restaurantToUpdate = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + " was not found"));
@@ -50,11 +52,12 @@ public class RestaurantRestApiController {
         BeanUtils.copyProperties(dishDto, dish);
         restaurantToUpdate.addDishToRestaurant(dish);
         restaurantRepository.save(restaurantToUpdate);
+        return new ResponseEntity<>("The dish was added successfully", HttpStatus.OK);
     }
 
     @PostMapping(path = "{restaurantId}/dishes")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void addDishesToRestaurant(@RequestBody Set<DishDto> dishDtos, @PathVariable Integer restaurantId) {
+    public ResponseEntity<String> addDishesToRestaurant(@RequestBody Set<DishDto> dishDtos, @PathVariable Integer restaurantId) {
         Restaurant restaurantToUpdate = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + " was not found"));
@@ -63,29 +66,29 @@ public class RestaurantRestApiController {
         dishDtos.forEach(dishDto -> {
             Dish dish = new Dish();
             dish.setDate(LocalDateTime.now());
-//            dish.setRestaurant();
             BeanUtils.copyProperties(dishDto, dish);
             dishes.add(dish);
         });
 
         restaurantToUpdate.addToMenu(dishes);
         restaurantRepository.save(restaurantToUpdate);
+        return new ResponseEntity<>("The dishes were added successfully", HttpStatus.OK);
     }
 
     @GetMapping(path = "{restaurantId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public Restaurant getRestaurantById(@PathVariable Integer restaurantId) {
-        return restaurantRepository.findById(restaurantId)
+    public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Integer restaurantId) {
+        return new ResponseEntity<>(restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Restaurant with id " + restaurantId + " was not found"));
+                        "Restaurant with id " + restaurantId + " was not found")), HttpStatus.OK);
     }
 
-//    @GetMapping(path = "{restaurantName}")
-//    public Restaurant getRestaurantByName(@PathVariable String restaurantName) {
-//        return restaurantRepository.findByName(restaurantName)
-//                .orElseThrow(() -> new EntityNotFoundException(
-//                        "Restaurant: " + restaurantName + " was not found"));
-//    }
+    @GetMapping(path = "{restaurantName}")
+    public ResponseEntity<Restaurant> getRestaurantByName(@PathVariable String restaurantName) {
+        return new ResponseEntity<>(restaurantRepository.findByName(restaurantName)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Restaurant: " + restaurantName + " was not found")), HttpStatus.OK);
+    }
 
     @GetMapping("{offset}/{limit}")
     @ResponseBody
@@ -97,18 +100,22 @@ public class RestaurantRestApiController {
 
     @PutMapping(path = "{restaurantId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void updateRestaurant(@PathVariable Integer restaurantId, @RequestBody RestaurantDto restaurantDto) {
+    public ResponseEntity<String> updateRestaurant(@PathVariable Integer restaurantId, @RequestBody RestaurantDto restaurantDto) {
         Restaurant restaurantToUpdate = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + "was not found"));
         restaurantToUpdate.setName(restaurantDto.getName());
         restaurantRepository.save(restaurantToUpdate);
+        return new ResponseEntity<>("Restaurant was successfully updated", HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{restaurantId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void deleteRestaurantById(@PathVariable Integer restaurantId) {
+    public ResponseEntity<String> deleteRestaurantById(@PathVariable Integer restaurantId) {
+        restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Restaurant with id " + restaurantId + "was not found"));
         restaurantRepository.deleteById(restaurantId);
+        return new ResponseEntity<>("Restaurant was deleted", HttpStatus.OK);
     }
 }
