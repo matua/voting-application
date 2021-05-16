@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,7 @@ public class UserRestApiController {
     }
 
     @GetMapping("{offset}/{limit}")
+    @Cacheable("Users Page")
     public EntitiesPageDto<User> getAllUsers(@PathVariable Integer offset,
                                              @PathVariable Integer limit) {
         Pageable nextPage = PageRequest.of(offset, limit);
@@ -73,9 +75,9 @@ public class UserRestApiController {
     }
 
     @PutMapping(path = "{userEmail}/toggle-status")
-    public ResponseEntity<String> toggleUserActivateStatus(@PathVariable String userEmail, Principal user) {
+    public ResponseEntity<String> toggleUserActivateStatus(@PathVariable String userEmail, Principal currentUser) {
         User userToUpdate = checkIfUserExists(userEmail);
-        if (userToUpdate.getEmail().equals(user.getName())) {
+        if (userToUpdate.getEmail().equals(currentUser.getName())) {
             throw new RuntimeException("User cannot activate/deactivate him/herself.");
         }
         Boolean userStatus = userToUpdate.getActivated();

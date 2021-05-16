@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+//Note that Java8's Optional return types are automatically handled and its content is stored in the cache if present (Spring docs on @Cacheable)
+
 @RestController
 @RequestMapping("api/v1/voting/dishes/")
+@Cacheable
 public class DishRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(DishRestApiController.class);
@@ -34,6 +38,9 @@ public class DishRestApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Dish>> getDishesByRestaurantId(@PathVariable Integer restaurantId) {
         logger.info("Getting dish by id:{}", restaurantId);
+        restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Restaurant with id " + restaurantId + " was not found"));
         restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + " was not found"));
