@@ -115,3 +115,7 @@ VOTES
 4. Delete vote
    curl -X DELETE --location "http://localhost:80/api/v1/voting/votes/1" \
    --basic --user admin@i.c:admin
+
+
+**Postman documentation:**
+https://www.getpostman.com/collections/cfae617548dac8f68eea
