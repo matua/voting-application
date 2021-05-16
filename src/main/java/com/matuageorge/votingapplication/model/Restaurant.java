@@ -6,19 +6,18 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(exclude = "menu")
+@EqualsAndHashCode(callSuper = true, exclude = "menu")
 @Entity
 @Table(name = "restaurants")
-public class Restaurant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class Restaurant extends AbstractBaseEntity{
+    @Column(nullable = false, unique = true)
+    @NotBlank
     private String name;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JsonIgnore
     @ToString.Exclude
     @JsonManagedReference
     private Set<Dish> menu;

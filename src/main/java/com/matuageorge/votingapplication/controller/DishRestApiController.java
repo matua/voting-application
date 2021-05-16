@@ -4,6 +4,8 @@ import com.matuageorge.votingapplication.dto.DishDto;
 import com.matuageorge.votingapplication.model.Dish;
 import com.matuageorge.votingapplication.repository.DishRepository;
 import com.matuageorge.votingapplication.repository.RestaurantRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("api/v1/voting/dishes/")
 public class DishRestApiController {
 
+    private static final Logger logger = LoggerFactory.getLogger(DishRestApiController.class);
     private final DishRepository dishRepository;
     private final RestaurantRepository restaurantRepository;
 
@@ -30,6 +33,7 @@ public class DishRestApiController {
     @GetMapping(path = "{restaurantId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<Dish>> getDishesByRestaurantId(@PathVariable Integer restaurantId) {
+        logger.info("Getting dish by id:{}", restaurantId);
         restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + " was not found"));
@@ -39,10 +43,12 @@ public class DishRestApiController {
     @PutMapping(path = "{dishId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateDish(@PathVariable Integer dishId, @RequestBody DishDto dishDto) {
+        logger.info("Checking if dish with id:{} exists", dishId);
         Dish dishToUpdate = dishRepository.findById(dishId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Dish with id " + dishId + " was not found"));
         BeanUtils.copyProperties(dishDto, dishToUpdate);
+        logger.info("Persisting the updated dish with id:{} to database", dishId);
         dishRepository.save(dishToUpdate);
         return new ResponseEntity<>("Dish was successfully updated", HttpStatus.OK);
     }
@@ -50,9 +56,11 @@ public class DishRestApiController {
     @DeleteMapping(path = "{dishId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteDishById(@PathVariable Integer dishId) {
+        logger.info("Checking if dish with id:{} exists", dishId);
         dishRepository.findById(dishId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Dish with id " + dishId + " was not found"));
+        logger.info("Deleting dish with id:{} to database", dishId);
         dishRepository.deleteById(dishId);
         return new ResponseEntity<>("Dish was deleted", HttpStatus.OK);
     }

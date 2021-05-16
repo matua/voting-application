@@ -14,7 +14,7 @@ values ('Duobam', 481, 1, '2021-05-10 09:59:36');
 insert into dishes (name, price, restaurant_id, date)
 values ('Sonair', 1230, 1, '2021-05-09 08:19:35');
 insert into dishes (name, price, restaurant_id, date)
-values ('Job', 37, 2, '2021-05-10 20:43:13');
+values ('Job', 137, 2, '2021-05-10 20:43:13');
 insert into dishes (name, price, restaurant_id, date)
 values ('Tres-Zap', 1419, 2, '2021-05-10 20:12:39');
 insert into dishes (name, price, restaurant_id, date)

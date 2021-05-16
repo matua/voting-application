@@ -5,6 +5,8 @@ import com.matuageorge.votingapplication.dto.UserDto;
 import com.matuageorge.votingapplication.model.Role;
 import com.matuageorge.votingapplication.model.User;
 import com.matuageorge.votingapplication.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +24,7 @@ import java.util.Set;
 @RequestMapping("api/v1/voting/users/")
 public class UserRestApiController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserRestApiController.class);
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -49,9 +52,7 @@ public class UserRestApiController {
 
     @GetMapping(path = "{userEmail}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User email: " + userEmail + " was not found"));
+        User user = checkIfUserExists(userEmail);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -64,9 +65,7 @@ public class UserRestApiController {
 
     @PutMapping(path = "{userEmail}")
     public ResponseEntity<String> updateUser(@PathVariable String userEmail, @RequestBody UserDto userDto) {
-        User userToUpdate = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User email: " + userEmail + " was not found"));
+        User userToUpdate = checkIfUserExists(userEmail);
         BeanUtils.copyProperties(userDto, userToUpdate);
         userRepository.save(userToUpdate);
         return new ResponseEntity<>("User was updated successfully", HttpStatus.OK);
@@ -74,10 +73,16 @@ public class UserRestApiController {
 
     @DeleteMapping(path = "{userEmail}")
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User email: " + userEmail + " was not found"));
+        User user = checkIfUserExists(userEmail);
+        logger.info("Deleting user with email {}", userEmail);
         userRepository.deleteById(user.getId());
         return new ResponseEntity<>("User was deleted successfully", HttpStatus.OK);
+    }
+
+    public User checkIfUserExists(String userEmail) {
+        logger.info("Checking if user with {} exists", userEmail);
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User with " + userEmail + " was not found"));
     }
 }

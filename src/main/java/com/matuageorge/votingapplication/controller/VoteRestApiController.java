@@ -7,6 +7,8 @@ import com.matuageorge.votingapplication.model.Vote;
 import com.matuageorge.votingapplication.repository.RestaurantRepository;
 import com.matuageorge.votingapplication.repository.UserRepository;
 import com.matuageorge.votingapplication.repository.VoteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1/voting/votes/")
 public class VoteRestApiController {
 
+    private static final Logger logger = LoggerFactory.getLogger(VoteRestApiController.class);
     public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(17, 0);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
@@ -48,9 +51,7 @@ public class VoteRestApiController {
         LocalTime votingTime = votingDateTime.toLocalTime();
 
         if (votingDateTime.isBefore(VOTING_TIME_THRESHOLD)) {
-            User user = userRepository.findByEmail(voter.getName())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "User email: " + voter.getName() + " was not found"));
+            User user = userRepository.findByEmail(voter.getName()).get();
             Restaurant restaurant = restaurantRepository.findByName(voteDto.getRestaurantName())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Restaurant: " + voteDto.getRestaurantName() + " was not found"));
@@ -63,9 +64,11 @@ public class VoteRestApiController {
             if (voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
                 vote = voteRepository.findByUserIdAndVotingDate(user.getId(), votingDate);
                 BeanUtils.copyProperties(voteDto, vote);
+                logger.info("Updating existing vote:{} to database", vote.getId());
                 voteRepository.save(vote);
                 return new ResponseEntity<>("Your vote is updated", HttpStatus.OK);
             }
+            logger.info("Persisting new vote:{} to database", vote.getId());
             voteRepository.save(vote);
             return new ResponseEntity<>("Your vote is taken", HttpStatus.OK);
         } else {
@@ -77,6 +80,7 @@ public class VoteRestApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public Map<Restaurant, List<Vote>> getVotingResultsDetailedByDate(@PathVariable(value = "date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
+        logger.info("Getting vote results for {}", date);
         List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));
         if (votes.isEmpty()) {
             throw new RuntimeException("No results found for this date");
@@ -97,15 +101,18 @@ public class VoteRestApiController {
                 .entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
+        logger.info("Getting simple vote results for {}", date);
         return result;
     }
 
     @DeleteMapping(path = "{voteId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteById(@PathVariable Integer voteId) {
+        logger.info("Checking if vote with {} exists", voteId);
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Vote: " + voteId + " was not found"));
+        logger.info("Deleting vote with id:{}", voteId);
         voteRepository.deleteById(vote.getId());
         return new ResponseEntity<>("Vote was deleted successfully", HttpStatus.OK);
     }
