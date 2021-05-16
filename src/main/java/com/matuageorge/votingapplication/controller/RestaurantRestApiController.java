@@ -55,6 +55,7 @@ public class RestaurantRestApiController {
         Restaurant restaurantToUpdate = checkIfRestaurantExists(restaurantId);
         Dish dish = new Dish();
         dish.setDate(LocalDateTime.now().withNano(0));
+        dish.setRestaurant(restaurantToUpdate);
         BeanUtils.copyProperties(dishDto, dish);
         restaurantToUpdate.addDishToRestaurant(dish);
         logger.info("Persisting dish \"{}\" to database", dish.getName());
@@ -70,6 +71,7 @@ public class RestaurantRestApiController {
         dishDtos.forEach(dishDto -> {
             Dish dish = new Dish();
             dish.setDate(LocalDateTime.now());
+            dish.setRestaurant(restaurantToUpdate);
             BeanUtils.copyProperties(dishDto, dish);
             logger.info("Persisting dish \"{}\" to database", dish.getName());
             dishes.add(dish);

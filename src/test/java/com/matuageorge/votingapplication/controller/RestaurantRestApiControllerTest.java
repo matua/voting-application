@@ -11,10 +11,9 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.OK;
 
-class RestaurantRestApiControllerTest extends Object {
-    private final String CONTEXT_PATH = "/api/v1/voting";
+class RestaurantRestApiControllerTest {
+    private final String CONTEXT_PATH = "/api/v1/voting/restaurants";
 
     @BeforeEach
     void setUp() {
@@ -24,36 +23,96 @@ class RestaurantRestApiControllerTest extends Object {
 
     @Test
     void addNewRestaurant() {
-        String payload = "{\n" +
-                "  \"name\": \"Paradise Food\"\n" +
-                "}";
+        String newRestaurant = "{\"name\": \"New Restaurant\"}\n";
 
-        given().auth()
-                .basic("admin@i.c", "admin")
+        given().
+                auth().basic("admin@i.c", "admin")
                 .contentType(JSON)
-                .body(payload)
+                .accept("application/json")
+                .body(newRestaurant)
                 .when()
-                .post(CONTEXT_PATH + "/restaurants")
+                .post(CONTEXT_PATH)
                 .then()
-                .assertThat()
-                .statusCode(OK.value());
-
+                .statusCode(200);
     }
+
 
     @Test
     void addDishToRestaurant() {
+        String newDish = """
+                {
+                  "name": "Satsivi",
+                  "price": "1000"
+                }""";
+
+        given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantId", 1)
+                .contentType(JSON)
+                .accept("application/json")
+                .body(newDish)
+                .when()
+                .post(CONTEXT_PATH + "/{restaurantId}")
+                .then()
+                .statusCode(200);
     }
 
     @Test
     void addDishesToRestaurant() {
+        String newDishes = """
+                [
+                  {
+                    "name": "Shaurma",
+                    "price": 450
+                  },
+                  {
+                    "name": "Pertsi",
+                    "price": 900
+                  }
+                ]""";
+
+        given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantId", 3)
+                .contentType(JSON)
+                .accept("application/json")
+                .body(newDishes)
+                .when()
+                .post(CONTEXT_PATH + "/{restaurantId}/dishes")
+                .then()
+                .statusCode(200);
     }
 
     @Test
     void getRestaurantById() {
+        Response response = given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantId", 3)
+                .when()
+                .get(CONTEXT_PATH + "/search-by-id/{restaurantId}")
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        String restaurantName = response.jsonPath().getString("name");
+        String expectedRestaurantName = "Tanuki";
+        assertEquals(expectedRestaurantName, restaurantName);
     }
 
     @Test
     void getRestaurantByName() {
+        Response response = given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantName", "El Mediterraneo")
+                .when()
+                .get(CONTEXT_PATH + "/search-by-name/{restaurantName}")
+                .then()
+                .statusCode(200)
+                .extract().response();
+
+        String restaurantName = response.jsonPath().getString("name");
+        String expectedRestaurantName = "El Mediterraneo";
+        assertEquals(expectedRestaurantName, restaurantName);
     }
 
     @Test
@@ -63,7 +122,7 @@ class RestaurantRestApiControllerTest extends Object {
                 .pathParam("offset", 0)
                 .pathParam("limit", 5)
                 .when()
-                .get(CONTEXT_PATH + "/restaurants/{offset}/{limit}")
+                .get(CONTEXT_PATH + "/{offset}/{limit}")
                 .then()
                 .statusCode(200)
                 .contentType(JSON)
@@ -72,15 +131,39 @@ class RestaurantRestApiControllerTest extends Object {
         List<String> restaurants = response.jsonPath().getList("entities.name");
 
         assertEquals(3, restaurants.size());
-        String[] expectedRestaurants = { "El Mediterraneo", "Caramel", "Tanuki" };
-        assertEquals(restaurants, Arrays.asList(expectedRestaurants));
+        String[] expectedRestaurants = {"El Mediterraneo", "Tanuki", "New Restaurant"};
+        assertEquals(Arrays.asList(expectedRestaurants), restaurants);
     }
 
     @Test
     void updateRestaurant() {
+        String updatedRestaurant = """
+                {
+                  "name": "Updated Restaurant"
+                }""";
+
+        given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantId", 1)
+                .contentType(JSON)
+                .accept("application/json")
+                .body(updatedRestaurant)
+                .when()
+                .put(CONTEXT_PATH + "/{restaurantId}")
+                .then()
+                .statusCode(200);
     }
 
     @Test
     void deleteRestaurantById() {
+        given().
+                auth().basic("admin@i.c", "admin")
+                .pathParam("restaurantId", 2)
+                .contentType(JSON)
+                .accept("application/json")
+                .when()
+                .delete(CONTEXT_PATH + "/{restaurantId}")
+                .then()
+                .statusCode(200);
     }
 }
