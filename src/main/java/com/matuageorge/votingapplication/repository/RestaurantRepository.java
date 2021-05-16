@@ -16,5 +16,8 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     @Cacheable("Restaurant Page")
     Page<Restaurant> findAll(Pageable page);
 
+    /*Note that Java8's Optional return types are automatically
+     handled and its content is stored in the cache
+     if present (Spring docs on @Cacheable)*/
     Optional<Restaurant> findByName(String restaurantName);
 }

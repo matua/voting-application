@@ -18,5 +18,4 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     List<Vote> findAllByVotingDate(LocalDate votingDate);
 
     Vote findByUserIdAndVotingDate(Integer user_id, LocalDate votingDate);
-
 }
