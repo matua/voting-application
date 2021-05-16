@@ -1,5 +1,5 @@
 insert into restaurants(name)
-values ('El Mediterrneo');
+values ('El Mediterraneo');
 insert into restaurants(name)
 values ('Caramel');
 insert into restaurants(name)
@@ -48,11 +48,15 @@ insert into users(email, password, registration_date, activated)
 values ('user@i.c', '$2y$12$tAYuwYaLmKp0jxZguKNDSOs9uLbmCRmG5/U0CY5l/g4T5YdCd0d5.',
         '2021-01-01 00:00:00', true);
 insert into users(email, password, registration_date, activated)
-values ('user2@i.c', '$2y$10$AkDvMXC3lEBRvhbdBUdeS.NjN6SCT5o.T0kGqlZFbPBm0ZQN.pRbe', '2020-01-01 00:00:00',
+values ('user2@i.c', '$2y$10$U.iRvvxlYAE3FCTgkmaqIu12wMdArbZuyHU4A0DMZxq6Z/ZzNBuvW', '2020-01-01 00:00:00',
         true);
+insert into users(email, password, registration_date, activated)
+values ('user3@i.c', '$2y$10$eJI8y5A/SuBjZNaWJ.1G2.Jc46bRJ46Rf4UVi1l2ci42j./p2r2X2',
+        '2021-01-01 00:00:00', true);
 insert into users(email, password, registration_date, activated)
 values ('notactivated@i.c', '$2y$10$vmRnsIss/Pxw.oj8yghhxOaHJvntqEb9GbAgY6B/.tlvp0dafngYS',
         '2021-01-01 00:00:00', false);
+
 
 insert into users_roles (user_id, role_id)
 values (1, 1);
@@ -62,5 +66,7 @@ insert into users_roles (user_id, role_id)
 values (3, 2);
 insert into users_roles (user_id, role_id)
 values (4, 2);
+insert into users_roles (user_id, role_id)
+values (5, 2);
 
 //All passwords are same as user emails before @

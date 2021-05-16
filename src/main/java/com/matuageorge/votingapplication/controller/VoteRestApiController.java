@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @RequestMapping("api/v1/voting/votes/")
 public class VoteRestApiController {
 
-    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(23, 0);
+    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(17, 0);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
@@ -60,15 +60,17 @@ public class VoteRestApiController {
                     .setVotingDate(votingDate)
                     .setVotingTime(votingTime);
             BeanUtils.copyProperties(voteDto, vote);
-            if (!voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
+            if (voteRepository.existsByUserIdAndVotingDate(user.getId(), votingDate)) {
+                vote = voteRepository.findByUserIdAndVotingDate(user.getId(), votingDate);
+                BeanUtils.copyProperties(voteDto, vote);
                 voteRepository.save(vote);
-            } else {
-                return new ResponseEntity<>("Only 1 vote per user is allowed", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Your vote is updated", HttpStatus.OK);
             }
+            voteRepository.save(vote);
+            return new ResponseEntity<>("Your vote is taken", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Voting time is over", HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity<>("Your vote is taken", HttpStatus.OK);
     }
 
     @GetMapping(path = "/results/{date}")
@@ -76,11 +78,15 @@ public class VoteRestApiController {
     public Map<Restaurant, List<Vote>> getVotingResultsDetailedByDate(@PathVariable(value = "date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
         List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));
+        if (votes.isEmpty()) {
+            throw new RuntimeException("No results found for this date");
+        }
         return votes.stream()
                 .collect(Collectors.groupingBy(Vote::getRestaurant));
     }
 
     @GetMapping(path = "/simple-results/{date}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
     public Map<Restaurant, Long> getSimpleVotingResults(@PathVariable(value = "date") String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MM-yyyy");
         List<Vote> votes = voteRepository.findAllByVotingDate(LocalDate.parse(date, formatter));

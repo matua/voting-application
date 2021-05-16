@@ -9,8 +9,9 @@ import java.util.List;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
-    boolean existsByUserIdAndVotingDate(Integer user_id, LocalDate votingDate);
 
+    boolean existsByUserIdAndVotingDate(Integer user_id, LocalDate votingDate);
     List<Vote> findAllByVotingDate(LocalDate votingDate);
+    Vote findByUserIdAndVotingDate(Integer user_id, LocalDate votingDate);
 
 }
