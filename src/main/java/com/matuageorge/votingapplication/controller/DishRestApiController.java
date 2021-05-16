@@ -18,7 +18,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/voting/dishes/")
+@RequestMapping("dishes")
 public class DishRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(DishRestApiController.class);

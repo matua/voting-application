@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
-@RequestMapping("api/v1/voting/users/")
+@RequestMapping("users")
 public class UserRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserRestApiController.class);

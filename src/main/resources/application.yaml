@@ -2,6 +2,8 @@ server:
   error:
     include-message: always
   port: 80
+  servlet:
+    context-path: /api/v1/voting/
 spring:
   datasource:
     data: classpath:data.sql

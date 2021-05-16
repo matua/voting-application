@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@RequestMapping("api/v1/voting/restaurants/")
+@RequestMapping("restaurants")
 public class RestaurantRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantRestApiController.class);

@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("api/v1/voting/votes/")
+@RequestMapping("votes")
 public class VoteRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(VoteRestApiController.class);
