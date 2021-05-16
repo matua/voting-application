@@ -43,6 +43,7 @@ public class VoteRestApiController {
         this.userRepository = userRepository;
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @PostMapping
     public ResponseEntity<String> vote(@RequestBody VoteDto voteDto,
                                        Principal voter) {
@@ -51,7 +52,7 @@ public class VoteRestApiController {
         LocalTime votingTime = votingDateTime.toLocalTime();
 
         if (votingDateTime.isBefore(VOTING_TIME_THRESHOLD)) {
-            User user = userRepository.findByEmail(voter.getName()).get();
+            User user = userRepository.findByEmail(voter.getName()).get(); //we are sure that user exists as this is the logged in user
             Restaurant restaurant = restaurantRepository.findByName(voteDto.getRestaurantName())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Restaurant: " + voteDto.getRestaurantName() + " was not found"));
