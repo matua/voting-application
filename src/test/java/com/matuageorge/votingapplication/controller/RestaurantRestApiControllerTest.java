@@ -23,7 +23,11 @@ class RestaurantRestApiControllerTest {
 
     @Test
     void addNewRestaurant() {
-        String newRestaurant = "{\"name\": \"New Restaurant\"}\n";
+        String newRestaurant = """
+        {
+            "name": "New Restaurant"
+        }
+        """;
 
         given().
                 auth().basic("admin@i.c", "admin")
@@ -41,8 +45,8 @@ class RestaurantRestApiControllerTest {
     void addDishToRestaurant() {
         String newDish = """
                 {
-                  "name": "Satsivi",
-                  "price": "1000"
+                    "name": "Satsivi",
+                    "price": "1000"
                 }""";
 
         given().
@@ -61,14 +65,14 @@ class RestaurantRestApiControllerTest {
     void addDishesToRestaurant() {
         String newDishes = """
                 [
-                  {
-                    "name": "Shaurma",
-                    "price": 450
-                  },
-                  {
-                    "name": "Pertsi",
-                    "price": 900
-                  }
+                    {
+                        "name": "Shaurma",
+                        "price": 450
+                      },
+                    {
+                        "name": "Pertsi",
+                        "price": 900
+                    }
                 ]""";
 
         given().
