@@ -80,13 +80,13 @@ public class RestaurantRestApiController {
         return new ResponseEntity<>("The dishes were added successfully", HttpStatus.OK);
     }
 
-    @GetMapping(path = "{restaurantId}")
+    @GetMapping(path = "/search-by-id/{restaurantId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Restaurant> getRestaurantById(@PathVariable Integer restaurantId) {
         return new ResponseEntity<>(checkIfRestaurantExists(restaurantId), HttpStatus.OK);
     }
 
-    @GetMapping(path = "{restaurantName}")
+    @GetMapping(path = "/search-by-name/{restaurantName}")
     public ResponseEntity<Restaurant> getRestaurantByName(@PathVariable String restaurantName) {
         logger.info("Checking if restaurant \"{}\" exists", restaurantName);
         return new ResponseEntity<>(restaurantRepository.findByName(restaurantName)

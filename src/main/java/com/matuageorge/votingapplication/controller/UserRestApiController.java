@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -69,6 +70,18 @@ public class UserRestApiController {
         BeanUtils.copyProperties(userDto, userToUpdate);
         userRepository.save(userToUpdate);
         return new ResponseEntity<>("User was updated successfully", HttpStatus.OK);
+    }
+
+    @PutMapping(path = "{userEmail}/toggle-status")
+    public ResponseEntity<String> toggleUserActivateStatus(@PathVariable String userEmail, Principal user) {
+        User userToUpdate = checkIfUserExists(userEmail);
+        if (userToUpdate.getEmail().equals(user.getName())) {
+            throw new RuntimeException("User cannot activate/deactivate him/herself.");
+        }
+        Boolean userStatus = userToUpdate.getActivated();
+        userToUpdate.setActivated(!userStatus);
+        userRepository.save(userToUpdate);
+        return new ResponseEntity<>(String.format("User status was successfully changed to %s", userStatus ? "DEACTIVATED" : "ACTIVATED"), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{userEmail}")
