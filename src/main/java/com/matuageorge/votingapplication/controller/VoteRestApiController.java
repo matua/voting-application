@@ -42,7 +42,7 @@ public class VoteRestApiController {
 
     @PostMapping
     public ResponseEntity<String> vote(@RequestBody VoteDto voteDto,
-                               Principal voter) {
+                                       Principal voter) {
         LocalDateTime votingDateTime = LocalDateTime.now().withNano(0);
         LocalDate votingDate = votingDateTime.toLocalDate();
         LocalTime votingTime = votingDateTime.toLocalTime();
@@ -95,12 +95,12 @@ public class VoteRestApiController {
     }
 
     @DeleteMapping(path = "{voteId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public void deleteById(@PathVariable Integer voteId) {
+    public ResponseEntity<String> deleteById(@PathVariable Integer voteId) {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Vote: " + voteId + " was not found"));
         voteRepository.deleteById(vote.getId());
+        return new ResponseEntity<>("Vote was deleted successfully", HttpStatus.OK);
     }
 }

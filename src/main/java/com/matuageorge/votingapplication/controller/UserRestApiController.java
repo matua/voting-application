@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class UserRestApiController {
     }
 
     @PostMapping
-    public void addNewUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<String> addNewUser(@RequestBody UserDto userDto) {
         User user = new User()
                 .setActivated(false)
                 .setRoles(Set.of(new Role("ADMIN")))
@@ -43,17 +44,18 @@ public class UserRestApiController {
         } else {
             throw new RuntimeException("User already exists");
         }
+        return new ResponseEntity<>("User was added successfully", HttpStatus.OK);
     }
 
     @GetMapping(path = "{userEmail}")
-    public User getUserByEmail(@PathVariable String userEmail) {
-        return userRepository.findByEmail(userEmail)
+    public ResponseEntity<User> getUserByEmail(@PathVariable String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User email: " + userEmail + " was not found"));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("{offset}/{limit}")
-    @ResponseBody
     public EntitiesPageDto<User> getAllUsers(@PathVariable Integer offset,
                                              @PathVariable Integer limit) {
         Pageable nextPage = PageRequest.of(offset, limit);
@@ -61,20 +63,21 @@ public class UserRestApiController {
     }
 
     @PutMapping(path = "{userEmail}")
-    public void updateUser(@PathVariable String userEmail, @RequestBody UserDto userDto) {
+    public ResponseEntity<String> updateUser(@PathVariable String userEmail, @RequestBody UserDto userDto) {
         User userToUpdate = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User email: " + userEmail + " was not found"));
         BeanUtils.copyProperties(userDto, userToUpdate);
         userRepository.save(userToUpdate);
+        return new ResponseEntity<>("User was updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{userEmail}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUserByEmail(@PathVariable String userEmail) {
+    public ResponseEntity<String> deleteUserByEmail(@PathVariable String userEmail) {
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "User email: " + userEmail + " was not found"));
         userRepository.deleteById(user.getId());
+        return new ResponseEntity<>("User was deleted successfully", HttpStatus.OK);
     }
 }

@@ -91,7 +91,6 @@ public class RestaurantRestApiController {
     }
 
     @GetMapping("{offset}/{limit}")
-    @ResponseBody
     public EntitiesPageDto<Restaurant> getAllRestaurants(@PathVariable Integer offset,
                                                          @PathVariable Integer limit) {
         Pageable nextPage = PageRequest.of(offset, limit);
