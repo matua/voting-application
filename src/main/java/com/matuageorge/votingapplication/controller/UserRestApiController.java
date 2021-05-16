@@ -69,6 +69,7 @@ public class UserRestApiController {
     @PutMapping(path = "{userEmail}")
     public ResponseEntity<String> updateUser(@PathVariable String userEmail, @RequestBody UserDto userDto) {
         User userToUpdate = checkIfUserExists(userEmail);
+        userDto.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         BeanUtils.copyProperties(userDto, userToUpdate);
         userRepository.save(userToUpdate);
         return new ResponseEntity<>("User was updated successfully", HttpStatus.OK);

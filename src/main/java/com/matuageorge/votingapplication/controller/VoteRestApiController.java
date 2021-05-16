@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class VoteRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(VoteRestApiController.class);
-    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(17, 0);
+    public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(23, 59);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
