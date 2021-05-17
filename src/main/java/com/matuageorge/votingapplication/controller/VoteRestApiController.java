@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 @RequestMapping("votes")
 public class VoteRestApiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(VoteRestApiController.class);
     public static final LocalDateTime VOTING_TIME_THRESHOLD = LocalDate.now().atTime(23, 59);
+    private static final Logger logger = LoggerFactory.getLogger(VoteRestApiController.class);
     private final VoteRepository voteRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;

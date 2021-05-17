@@ -57,7 +57,7 @@ insert into users(email, password, registration_date, activated)
 values ('notactivated@i.c', '$2y$10$vmRnsIss/Pxw.oj8yghhxOaHJvntqEb9GbAgY6B/.tlvp0dafngYS',
         '2021-01-01 00:00:00', false);
 
-
+-- All passwords are same as user emails before @. For example, user@i.c has password user; user2@i.c has password user2
 insert into users_roles (user_id, role_id)
 values (1, 1);
 insert into users_roles (user_id, role_id)
@@ -69,4 +69,28 @@ values (4, 2);
 insert into users_roles (user_id, role_id)
 values (5, 2);
 
-//All passwords are same as user emails before @
+
+-- Action	ID	VOTING_DATE	VOTING_TIME	RESTAURANT_ID	USER_ID
+-- Add	voting history
+
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-15', '10:28:08', 1, 1);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-15', '09:28:08', 2, 2);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-15', '01:28:08', 3, 3);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-15', '10:18:08', 1, 4);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-15', '10:38:08', 2, 5);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-16', '10:45:08', 3, 1);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-16', '09:52:08', 3, 2);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-16', '01:10:08', 3, 3);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-16', '07:43:08', 2, 4);
+insert into votes (voting_date, voting_time, restaurant_id, user_id)
+values ('2021-05-16', '10:21:08', 3, 5);
+
