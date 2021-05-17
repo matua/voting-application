@@ -5,6 +5,7 @@ import com.matuageorge.votingapplication.dto.EntitiesPageDto;
 import com.matuageorge.votingapplication.dto.RestaurantDto;
 import com.matuageorge.votingapplication.model.Dish;
 import com.matuageorge.votingapplication.model.Restaurant;
+import com.matuageorge.votingapplication.repository.DishRepository;
 import com.matuageorge.votingapplication.repository.RestaurantRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +30,12 @@ public class RestaurantRestApiController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantRestApiController.class);
     private final RestaurantRepository restaurantRepository;
+    private final DishRepository dishRepository;
 
     @Autowired
-    public RestaurantRestApiController(RestaurantRepository restaurantRepository) {
+    public RestaurantRestApiController(RestaurantRepository restaurantRepository, DishRepository dishRepository) {
         this.restaurantRepository = restaurantRepository;
+        this.dishRepository = dishRepository;
     }
 
     @PostMapping
@@ -53,6 +56,7 @@ public class RestaurantRestApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> addDishToRestaurant(@RequestBody DishDto dishDto, @PathVariable Integer restaurantId) {
         Restaurant restaurantToUpdate = checkIfRestaurantExists(restaurantId);
+        checkIfDishExists(dishDto.getName());
         Dish dish = new Dish();
         dish.setDate(LocalDateTime.now().withNano(0));
         dish.setRestaurant(restaurantToUpdate);
@@ -69,6 +73,7 @@ public class RestaurantRestApiController {
         Restaurant restaurantToUpdate = checkIfRestaurantExists(restaurantId);
         Set<Dish> dishes = new HashSet<>();
         dishDtos.forEach(dishDto -> {
+            checkIfDishExists(dishDto.getName());
             Dish dish = new Dish();
             dish.setDate(LocalDateTime.now());
             dish.setRestaurant(restaurantToUpdate);
@@ -128,5 +133,12 @@ public class RestaurantRestApiController {
         return restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Restaurant with id " + restaurantId + " was not found"));
+    }
+
+    private void checkIfDishExists(String dishName) {
+        logger.info("Checking if dish \"{}\" exists", dishName);
+        if (dishRepository.findByName(dishName).isPresent()){
+            throw new RuntimeException(String.format("Dish '%s' already exists", dishName));
+        }
     }
 }
