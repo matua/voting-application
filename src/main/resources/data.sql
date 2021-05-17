@@ -6,35 +6,35 @@ insert into restaurants(name)
 values ('Tanuki');
 
 insert into dishes (name, price, restaurant_id, date)
-values ('Holdlamis', 592, 1, '2021-05-09 20:41:45');
+values ('Key lime pie', 592, 1, '2021-05-09 20:41:45');
 insert into dishes (name, price, restaurant_id, date)
-values ('Prodder', 1588, 1, '2021-05-10 10:39:49');
+values ('Tater tots', 1588, 1, '2021-05-10 10:39:49');
 insert into dishes (name, price, restaurant_id, date)
-values ('Duobam', 481, 1, '2021-05-10 09:59:36');
+values ('Cobb salad', 481, 1, '2021-05-10 09:59:36');
 insert into dishes (name, price, restaurant_id, date)
-values ('Sonair', 1230, 1, '2021-05-09 08:19:35');
+values ('Pot roast', 1230, 1, '2021-05-09 08:19:35');
 insert into dishes (name, price, restaurant_id, date)
-values ('Job', 137, 2, '2021-05-10 20:43:13');
+values ('Twinkies', 137, 2, '2021-05-10 20:43:13');
 insert into dishes (name, price, restaurant_id, date)
-values ('Tres-Zap', 1419, 2, '2021-05-10 20:12:39');
+values ('Jerky', 1419, 2, '2021-05-10 20:12:39');
 insert into dishes (name, price, restaurant_id, date)
-values ('Y-find', 2375, 2, '2021-05-10 16:56:36');
+values ('Fajitas', 2375, 2, '2021-05-10 16:56:36');
 insert into dishes (name, price, restaurant_id, date)
-values ('Subin', 713, 2, '2021-05-10 11:54:12');
+values ('Banana split', 713, 2, '2021-05-10 11:54:12');
 insert into dishes (name, price, restaurant_id, date)
-values ('Sonsing', 1645, 2, '2021-05-09 03:04:06');
+values ('Cornbread', 1645, 2, '2021-05-09 03:04:06');
 insert into dishes (name, price, restaurant_id, date)
-values ('Prodder', 1218, 2, '2021-05-09 13:00:02');
+values ('GORP', 1218, 2, '2021-05-09 13:00:02');
 insert into dishes (name, price, restaurant_id, date)
-values ('Namfix', 2255, 3, '2021-05-11 01:08:22');
+values ('Jambalaya', 2255, 3, '2021-05-11 01:08:22');
 insert into dishes (name, price, restaurant_id, date)
-values ('Alphazap', 1426, 3, '2021-05-10 20:26:34');
+values ('Biscuits ''n'' gravy', 1426, 3, '2021-05-10 20:26:34');
 insert into dishes (name, price, restaurant_id, date)
-values ('Konklab', 2105, 3, '2021-05-10 00:17:03');
+values ('Smithfield ham', 2105, 3, '2021-05-10 00:17:03');
 insert into dishes (name, price, restaurant_id, date)
-values ('Andalax', 1980, 3, '2021-05-09 04:49:32');
+values ('Chicken fried steak', 1980, 3, '2021-05-09 04:49:32');
 insert into dishes (name, price, restaurant_id, date)
-values ('Cardify', 2252, 3, '2021-05-10 03:39:50');
+values ('Wild Alaska salmon', 2252, 3, '2021-05-10 03:39:50');
 
 insert into roles (name)
 values ('ROLE_ADMIN');
