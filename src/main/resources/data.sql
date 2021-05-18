@@ -70,7 +70,6 @@ insert into users_roles (user_id, role_id)
 values (5, 2);
 
 
--- Action	ID	VOTING_DATE	VOTING_TIME	RESTAURANT_ID	USER_ID
 -- Add	voting history
 
 insert into votes (voting_date, voting_time, restaurant_id, user_id)

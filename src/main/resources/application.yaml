@@ -11,7 +11,7 @@ spring:
     initialization-mode: always
     name: datasource
     password: admin
-    url: jdbc:h2:mem:voting_db
+    url: jdbc:h2:./data/voting_db;AUTO_SERVER=true
     username: matua
   h2:
     console:
@@ -19,7 +19,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true

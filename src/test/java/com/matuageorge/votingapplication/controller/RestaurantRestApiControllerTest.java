@@ -2,8 +2,9 @@ package com.matuageorge.votingapplication.controller;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,11 @@ import java.util.List;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 class RestaurantRestApiControllerTest {
     private final String CONTEXT_PATH = "/api/v1/voting/restaurants";
 
@@ -22,12 +27,13 @@ class RestaurantRestApiControllerTest {
     }
 
     @Test
+    @Order(1)
     void addNewRestaurant() {
         String newRestaurant = """
-        {
-            "name": "New Restaurant"
-        }
-        """;
+                {
+                    "name": "New Restaurant"
+                }
+                """;
 
         given().
                 auth().basic("admin@i.c", "admin")
@@ -42,26 +48,7 @@ class RestaurantRestApiControllerTest {
 
 
     @Test
-    void addDishToRestaurant() {
-        String newDish = """
-                {
-                    "name": "Satsivi",
-                    "price": "1000"
-                }""";
-
-        given().
-                auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantId", 1)
-                .contentType(JSON)
-                .accept("application/json")
-                .body(newDish)
-                .when()
-                .post(CONTEXT_PATH + "/{restaurantId}")
-                .then()
-                .statusCode(200);
-    }
-
-    @Test
+    @Order(2)
     void addDishesToRestaurant() {
         String newDishes = """
                 [
@@ -77,7 +64,7 @@ class RestaurantRestApiControllerTest {
 
         given().
                 auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantId", 3)
+                .pathParam("restaurantId", 4)
                 .contentType(JSON)
                 .accept("application/json")
                 .body(newDishes)
@@ -88,10 +75,11 @@ class RestaurantRestApiControllerTest {
     }
 
     @Test
+    @Order(3)
     void getRestaurantById() {
         Response response = given().
                 auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantId", 3)
+                .pathParam("restaurantId", 4)
                 .when()
                 .get(CONTEXT_PATH + "/search-by-id/{restaurantId}")
                 .then()
@@ -99,15 +87,16 @@ class RestaurantRestApiControllerTest {
                 .extract().response();
 
         String restaurantName = response.jsonPath().getString("name");
-        String expectedRestaurantName = "Tanuki";
+        String expectedRestaurantName = "New Restaurant";
         assertEquals(expectedRestaurantName, restaurantName);
     }
 
     @Test
+    @Order(4)
     void getRestaurantByName() {
         Response response = given().
                 auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantName", "El Mediterraneo")
+                .pathParam("restaurantName", "New Restaurant")
                 .when()
                 .get(CONTEXT_PATH + "/search-by-name/{restaurantName}")
                 .then()
@@ -115,11 +104,12 @@ class RestaurantRestApiControllerTest {
                 .extract().response();
 
         String restaurantName = response.jsonPath().getString("name");
-        String expectedRestaurantName = "El Mediterraneo";
+        String expectedRestaurantName = "New Restaurant";
         assertEquals(expectedRestaurantName, restaurantName);
     }
 
     @Test
+    @Order(5)
     void getAllRestaurants() {
         Response response = given().
                 auth().basic("admin@i.c", "admin")
@@ -134,12 +124,13 @@ class RestaurantRestApiControllerTest {
 
         List<String> restaurants = response.jsonPath().getList("entities.name");
 
-        assertEquals(3, restaurants.size());
-        String[] expectedRestaurants = {"El Mediterraneo", "Tanuki", "New Restaurant"};
+        assertEquals(4, restaurants.size());
+        String[] expectedRestaurants = {"El Mediterraneo", "Caramel", "Tanuki", "New Restaurant"};
         assertEquals(Arrays.asList(expectedRestaurants), restaurants);
     }
 
     @Test
+    @Order(6)
     void updateRestaurant() {
         String updatedRestaurant = """
                 {
@@ -148,7 +139,7 @@ class RestaurantRestApiControllerTest {
 
         given().
                 auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantId", 1)
+                .pathParam("restaurantId", 4)
                 .contentType(JSON)
                 .accept("application/json")
                 .body(updatedRestaurant)
@@ -159,10 +150,11 @@ class RestaurantRestApiControllerTest {
     }
 
     @Test
+    @Order(7)
     void deleteRestaurantById() {
         given().
                 auth().basic("admin@i.c", "admin")
-                .pathParam("restaurantId", 2)
+                .pathParam("restaurantId", 1)
                 .contentType(JSON)
                 .accept("application/json")
                 .when()

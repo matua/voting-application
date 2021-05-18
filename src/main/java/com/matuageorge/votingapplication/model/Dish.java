@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@Table(name = "dishes", uniqueConstraints = {@UniqueConstraint(columnNames = "name", name = "no_duplicate_name_idx")})
+@Table(name = "dishes", uniqueConstraints = {@UniqueConstraint(columnNames = "name", name = "UQ_Dishes_name")})
 @Entity
 public class Dish extends AbstractNamedEntity {
     @Column(nullable = false)

@@ -16,7 +16,7 @@ import java.util.Collection;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "emails_idx")})
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "UQ_Users_Email")})
 public class User extends AbstractBaseEntity {
     @Column(nullable = false, unique = true)
     @NotBlank

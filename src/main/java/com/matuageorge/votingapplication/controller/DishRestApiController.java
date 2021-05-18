@@ -46,7 +46,7 @@ public class DishRestApiController {
 
     @PutMapping(path = "{dishId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateDish(@PathVariable Integer dishId, @RequestBody DishDto dishDto) {
+    public ResponseEntity<String> updateDishById(@PathVariable Integer dishId, @RequestBody DishDto dishDto) {
         logger.info("Checking if dish with id:{} exists", dishId);
         Dish dishToUpdate = dishRepository.findById(dishId)
                 .orElseThrow(() -> new EntityNotFoundException(
