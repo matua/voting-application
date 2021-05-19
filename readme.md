@@ -32,5 +32,3 @@ Hibernate/Spring Data JPA
 Spring Security
 Rest Assured
 Maven
-
-NB: Due to time constraints project is not yet completed, particularly tests are done only for RestaurantRestApi Controller.
