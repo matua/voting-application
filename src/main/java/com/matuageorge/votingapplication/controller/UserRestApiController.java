@@ -54,6 +54,7 @@ public class UserRestApiController {
     }
 
     @GetMapping(path = "{userEmail}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<User> getUserByEmail(@PathVariable String userEmail) {
         User user = checkIfUserExists(userEmail);
         return new ResponseEntity<>(user, HttpStatus.OK);
